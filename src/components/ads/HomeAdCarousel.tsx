@@ -5,6 +5,7 @@ import {
   filterAllowed,
   resolveUserPlan,
   useActiveBanners,
+  normalizeUrl,
   useIsMobileDevice,
   type AdBanner,
 } from '@/lib/ads';

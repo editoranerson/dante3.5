@@ -1,35 +1,30 @@
 import { createFileRoute, ClientOnly } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
 
-// The ported app owns its own hash-based router and reads window during render,
-// so it is mounted client-side only.
 const App = lazy(() => import("@/App"));
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/$")({
   head: () => ({
     meta: [
       { title: "Querido Dante — O universo interativo do Dante" },
       {
         name: "description",
         content:
-          "Explore o universo de Querido Dante: personagens, segredos, playlist, álbum de cards, tarefas, minijogos e loja. Converse com o Dante e colecione recompensas.",
+          "Explore o universo de Querido Dante: biblioteca, chatstories, personagens, segredos, minijogos e muito mais.",
       },
       { property: "og:title", content: "Querido Dante — O universo interativo do Dante" },
       {
         property: "og:description",
         content:
-          "Personagens, segredos, playlist, álbum de cards, tarefas e minijogos. Entre no universo de Querido Dante.",
+          "Biblioteca, chatstories, personagens, segredos, minijogos e recompensas no universo de Querido Dante.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://queridodante.lovable.app/" },
       { property: "og:image", content: "https://queridodante.lovable.app/og-preview.jpg" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: "https://queridodante.lovable.app/og-preview.jpg" },
     ],
   }),
-  component: Index,
+  component: CatchAll,
 });
 
 function Loader() {
@@ -40,7 +35,7 @@ function Loader() {
   );
 }
 
-function Index() {
+function CatchAll() {
   return (
     <ClientOnly fallback={<Loader />}>
       <Suspense fallback={<Loader />}>

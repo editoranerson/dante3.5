@@ -1,0 +1,14 @@
+[functions.affiliate-track]
+verify_jwt = false
+
+[functions.chat-dante]
+verify_jwt = true
+
+[functions.diag-gemini]
+verify_jwt = true
+
+[functions.mercadopago-checkout]
+verify_jwt = true
+
+[functions.mercadopago-webhook]
+verify_jwt = false

@@ -1,29 +1,49 @@
-# Welcome to your Lovable project
+# Querido Dante
 
-This project was built with [Lovable](https://lovable.dev).
+Site migrado do Bolt para o Lovable, mantendo o tema visual original e conectado ao Supabase próprio.
 
-## Build with Lovable
+## Sincronização
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+### GitHub
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+Este projeto ainda **não está conectado** ao repositório `github.com/qrddante/querido-dante`. Para ativar o sync bidirecional:
 
-## Development
+1. No editor do Lovable, clique no menu **Plus (+)** → **GitHub** → **Connect project**.
+2. Autorize o app do Lovable no GitHub.
+3. Escolha a conta/organização e selecione o repositório `querido-dante`.
+4. Após a conexão, toda alteração feita no Lovable será commitada no GitHub, e alterações feitas no GitHub sincronizam de volta ao Lovable.
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+> Atenção: o repositório original do Bolt tem uma estrutura diferente (SPA com hash-router) da estrutura atual (TanStack Start). Avalie se deseja substituir o conteúdo do GitHub pela versão Lovable ou manter um branch separado.
+
+### Atualizações já sincronizadas manualmente do GitHub
+
+- **Página Planos (`/planos`)**: trazida do repositório GitHub e integrada ao roteamento do projeto Lovable. A página exibe os planos Free, Dante Plus, Dante Premium e Dante Premium+.
+- **Navegação**: item "Planos" adicionado à navbar e botão "Fazer upgrade do plano" no perfil redireciona para `/planos`.
+
+### Supabase
+
+O projeto usa o Supabase próprio do usuário (BYO), configurado com as variáveis:
+
+- `MEU_SUPABASE_URL`
+- `MEU_SUPABASE_ANON_KEY`
+- `MEU_SUPABASE_SERVICE_KEY`
+
+**Importante:** o Lovable não sincroniza schema, tabelas, RLS, policies ou functions automaticamente no Supabase próprio. Qualquer mudança que envolva o banco de dados precisa ser aplicada manualmente no painel do Supabase ou via migrations próprias.
+
+## Desenvolvimento local
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
+git clone <url-do-repositorio>
+cd querido-dante
 npm i
 npm run dev
 ```
 
-## Built with
+## Stack
 
 - TanStack Start
+- React 19
 - TypeScript
-- React
-- Tailwind CSS
+- Tailwind CSS v4
+- Supabase JS
+- Lucide React

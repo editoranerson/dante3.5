@@ -16,6 +16,7 @@ import { TarefasPage } from '@/pages/TarefasPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { SignupPage } from '@/pages/SignupPage';
 import { AdminPage } from '@/pages/AdminPage';
+import { AnunciosPage } from '@/pages/AnunciosPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { TermsPage, PrivacyPage } from '@/pages/LegalPages';
 import { BibliotecaPage } from '@/pages/BibliotecaPage';
@@ -77,6 +78,12 @@ function Routed() {
       return (
         <RequireAdmin>
           <AdminPage />
+        </RequireAdmin>
+      );
+    case 'anuncios':
+      return (
+        <RequireAdmin>
+          <AnunciosPage />
         </RequireAdmin>
       );
     case 'profile':

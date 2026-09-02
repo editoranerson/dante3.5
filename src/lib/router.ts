@@ -10,6 +10,7 @@ export type Route =
   | { name: 'login' }
   | { name: 'signup' }
   | { name: 'admin' }
+  | { name: 'anuncios' }
   | { name: 'profile' }
   | { name: 'terms' }
   | { name: 'privacy' }
@@ -38,6 +39,7 @@ function parsePath(path: string): Route {
   if (path === '/login') return { name: 'login' };
   if (path === '/cadastro') return { name: 'signup' };
   if (path === '/admin') return { name: 'admin' };
+  if (path === '/anuncios') return { name: 'anuncios' };
   if (path === '/perfil') return { name: 'profile' };
   if (path === '/termos') return { name: 'terms' };
   if (path === '/privacidade') return { name: 'privacy' };
@@ -96,6 +98,8 @@ export function routeToPath(route: Route): string {
       return '/cadastro';
     case 'admin':
       return '/admin';
+    case 'anuncios':
+      return '/anuncios';
     case 'profile':
       return '/perfil';
     case 'terms':

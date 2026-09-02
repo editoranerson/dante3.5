@@ -8,6 +8,7 @@ import {
   type ChatstoryElement,
 } from '@/lib/supabase';
 import { useToast } from '@/components/Toast';
+import { fetchActiveBanners } from '@/lib/ads';
 import { Modal } from '@/components/Modal';
 import { ImageUpload } from '@/components/ImageUpload';
 
@@ -554,7 +555,9 @@ function ElementsAdmin({ chapter, onBack }: { chapter: ChatstoryChapter; onBack:
   const [items, setItems] = useState<ChatstoryElement[]>([]);
   const [characters, setCharacters] = useState<ChatstoryCharacter[]>([]);
   const [loading, setLoading] = useState(true);
-  const [kind, setKind] = useState<'message' | 'narration'>('message');
+  const [kind, setKind] = useState<'message' | 'narration' | 'ad'>('message');
+  const [adTags, setAdTags] = useState<string[]>([]);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [characterId, setCharacterId] = useState('');
   const [side, setSide] = useState<'left' | 'right'>('left');
   const [content, setContent] = useState('');
@@ -573,16 +576,21 @@ function ElementsAdmin({ chapter, onBack }: { chapter: ChatstoryChapter; onBack:
       setCharacterId((prev) => prev || chars[0]?.id || '');
       setLoading(false);
     });
+    fetchActiveBanners(true).then((rows) =>
+      setAvailableTags(rows.filter((b) => b.placement === 'html').map((b) => b.nome_interno)),
+    );
   };
   useEffect(load, [chapter.id]);
 
   const reset = () => {
     setEditingId(null);
     setContent('');
+    setAdTags([]);
   };
 
   const save = async () => {
-    if (!content.trim()) return toast('Escreva o texto.', 'error');
+    if (kind !== 'ad' && !content.trim()) return toast('Escreva o texto.', 'error');
+    if (kind === 'ad' && adTags.length === 0) return toast('Selecione ao menos uma tag de banner.', 'error');
     if (kind === 'message' && !characterId) return toast('Selecione um personagem.', 'error');
     setSaving(true);
     const payload = {
@@ -590,7 +598,8 @@ function ElementsAdmin({ chapter, onBack }: { chapter: ChatstoryChapter; onBack:
       kind,
       character_id: kind === 'message' ? characterId : null,
       side: kind === 'message' ? side : null,
-      content: content.trim(),
+      content: kind === 'ad' ? '[anúncio]' : content.trim(),
+      ad_tags: kind === 'ad' ? adTags : null,
       sort_order: editingId ? items.find((i) => i.id === editingId)?.sort_order ?? items.length : items.length,
     };
     const { error } = editingId
@@ -634,6 +643,7 @@ function ElementsAdmin({ chapter, onBack }: { chapter: ChatstoryChapter; onBack:
             [
               { id: 'message', label: 'Mensagem de personagem' },
               { id: 'narration', label: 'Narração' },
+              { id: 'ad', label: 'Bloco de anúncio' },
             ] as const
           ).map((k) => (
             <button
@@ -680,10 +690,41 @@ function ElementsAdmin({ chapter, onBack }: { chapter: ChatstoryChapter; onBack:
             </div>
           </div>
         )}
-        <div>
-          <label className="label">{kind === 'message' ? 'Mensagem' : 'Texto da narração'}</label>
-          <textarea className="input min-h-[90px] resize-y" value={content} onChange={(e) => setContent(e.target.value)} />
-        </div>
+        {kind === 'ad' ? (
+          <div>
+            <label className="label">Tags de banners associadas a este ponto</label>
+            {availableTags.length === 0 ? (
+              <p className="text-sm text-grape-200/60">
+                Nenhum banner HTML cadastrado. Cadastre em Perfil → Anúncios.
+              </p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {availableTags.map((t) => {
+                  const on = adTags.includes(t);
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() =>
+                        setAdTags((prev) => (on ? prev.filter((x) => x !== t) : [...prev, t]))
+                      }
+                      className={`rounded-full px-3 py-1.5 text-xs font-semibold ${
+                        on ? 'bg-white/15 text-grape-50' : 'border border-white/10 text-grape-200/70'
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div>
+            <label className="label">{kind === 'message' ? 'Mensagem' : 'Texto da narração'}</label>
+            <textarea className="input min-h-[90px] resize-y" value={content} onChange={(e) => setContent(e.target.value)} />
+          </div>
+        )}
         <div className="flex justify-end gap-2">
           {editingId && (
             <button onClick={reset} className="btn-ghost">
@@ -714,7 +755,9 @@ function ElementsAdmin({ chapter, onBack }: { chapter: ChatstoryChapter; onBack:
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-semibold uppercase tracking-wide text-grape-200/50">
-                  {el.kind === 'narration'
+                  {el.kind === 'ad'
+                    ? `Bloco de anúncio · ${(el.ad_tags ?? []).join(', ')}`
+                    : el.kind === 'narration'
                     ? 'Narração'
                     : `${charName(el.character_id)} · ${el.side === 'right' ? 'direita' : 'esquerda'}`}
                 </p>
@@ -724,6 +767,7 @@ function ElementsAdmin({ chapter, onBack }: { chapter: ChatstoryChapter; onBack:
                 onClick={() => {
                   setEditingId(el.id);
                   setKind(el.kind);
+                  setAdTags(el.ad_tags ?? []);
                   setCharacterId(el.character_id ?? '');
                   setSide(el.side ?? 'left');
                   setContent(el.content);

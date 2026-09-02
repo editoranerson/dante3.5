@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CircleUser as UserCircle, Mail, Phone, Calendar, Lock, LogOut, Shield, Save, ArrowRight, KeyRound, Sparkles, Loader as Loader2, Crown, Plus, Diamond, Star, Settings } from 'lucide-react';
+import { CircleUser as UserCircle, Mail, Phone, Calendar, Lock, LogOut, Shield, Save, ArrowRight, KeyRound, Sparkles, Loader as Loader2, Crown, Plus, Diamond, Star, Settings, Megaphone } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth';
 import { navigateTo } from '@/lib/router';
@@ -9,7 +9,7 @@ import { getEffectivePlan, getPlanInfo, isSubscriptionActive } from '@/lib/plans
 import { AmbassadorPanel } from '@/components/AmbassadorPanel';
 import { AmbassadorAdminPanel } from '@/components/AmbassadorAdminPanel';
 
-type Tab = 'overview' | 'edit' | 'password' | 'embaixadores' | 'admin';
+type Tab = 'overview' | 'edit' | 'password' | 'embaixadores' | 'anuncios' | 'admin';
 
 export function ProfilePage() {
   const { user, profile, isAdmin, refreshProfile, signOut } = useAuth();
@@ -63,6 +63,7 @@ export function ProfilePage() {
     { id: 'edit', label: 'Editar Perfil', icon: Save, show: true },
     { id: 'password', label: 'Alterar Senha', icon: KeyRound, show: true },
     { id: 'embaixadores', label: 'Embaixadores', icon: Star, show: true },
+    { id: 'anuncios', label: 'Anúncios', icon: Megaphone, show: isAdmin },
     { id: 'admin', label: 'Administração', icon: Shield, show: isAdmin },
   ];
 
@@ -348,6 +349,30 @@ export function ProfilePage() {
               <AmbassadorAdminPanel />
             </div>
           )}
+        </div>
+      )}
+
+      {tab === 'anuncios' && isAdmin && (
+        <div className="space-y-4">
+          <div className="card space-y-4 border-gold-400/20 bg-ink-800/60 p-6">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gold-400/15">
+                <Megaphone size={24} className="text-gold-400" />
+              </div>
+              <div>
+                <h2 className="font-display text-lg font-semibold text-gold-400">Anúncios</h2>
+                <p className="text-sm text-grape-200/70">
+                  Gerencie os banners da Home, do Chat do Dante e das Chatstorys.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigateTo({ name: 'anuncios' })}
+              className="btn w-full border border-gold-400/40 bg-gold-400/10 text-gold-400 hover:bg-gold-400/20"
+            >
+              <Megaphone size={18} /> Abrir Painel de Anúncios
+            </button>
+          </div>
         </div>
       )}
 

@@ -209,8 +209,15 @@ export function useIsMobileDevice() {
 /** Gera o HTML padrão (imagem + link) para banners da Home. */
 export function buildImageBannerHtml(imageUrl: string, linkUrl: string, alt = 'Publicidade') {
   const a = alt.replace(/"/g, '&quot;');
-  const img = `<img src="${imageUrl}" alt="${a}" style="display:block;width:100%;height:auto;border-radius:12px" loading="lazy" />`;
-  return linkUrl
-    ? `<a href="${linkUrl}" target="_blank" rel="noopener sponsored">${img}</a>`
-    : img;
+  const img = `<img src="${imageUrl}" alt="${a}" style="display:block;width:100%;height:auto;border-radius:12px" />`;
+  const href = normalizeUrl(linkUrl);
+  return href ? `<a href="${href}" target="_blank" rel="noopener sponsored">${img}</a>` : img;
+}
+
+/** Garante protocolo em links cadastrados (ex.: "site.com" -> "https://site.com"). */
+export function normalizeUrl(url: string | null | undefined): string {
+  const u = (url ?? '').trim();
+  if (!u) return '';
+  if (/^(https?:)?\/\//i.test(u) || /^(mailto:|tel:)/i.test(u)) return u;
+  return `https://${u}`;
 }

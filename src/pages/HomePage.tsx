@@ -1,5 +1,6 @@
 import { BookOpen, Layers, Gift, MessageCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { navigateTo } from '@/lib/router';
+import { HomeAdCarousel } from '@/components/ads/HomeAdCarousel';
 
 const BOOK_LINK = 'https://falou.me/qrddante';
 const WHATSAPP_LINK =
@@ -35,6 +36,8 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      <HomeAdCarousel />
 
       {/* Topics */}
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">

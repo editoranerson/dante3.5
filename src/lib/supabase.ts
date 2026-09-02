@@ -294,7 +294,7 @@ export interface ChatstoryChapter {
   created_at: string;
 }
 
-export type ChatstoryElementKind = 'message' | 'narration';
+export type ChatstoryElementKind = 'message' | 'narration' | 'ad';
 
 export interface ChatstoryElement {
   id: string;
@@ -304,6 +304,7 @@ export interface ChatstoryElement {
   side: 'left' | 'right' | null;
   content: string;
   sort_order: number;
+  ad_tags?: string[] | null;
   created_at: string;
 }
 

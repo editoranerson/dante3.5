@@ -43,12 +43,34 @@ export function HomeAdCarousel() {
   if (list.length === 0) return null;
   const current = list[index % list.length];
   const html = isMobile ? current.codigo_html_mobile : current.codigo_html_desktop;
+  const imageUrl = isMobile
+    ? current.image_mobile_url || current.image_desktop_url
+    : current.image_desktop_url || current.image_mobile_url;
+  const href = normalizeUrl(current.link_url);
+
+  const image = imageUrl ? (
+    <img
+      src={imageUrl}
+      alt={current.nome_interno || 'Publicidade'}
+      className="block h-auto w-full animate-fade-in"
+    />
+  ) : null;
 
   return (
     <section className="mx-auto w-full max-w-5xl px-4 pb-2 pt-4 sm:px-6">
       <p className="mb-1 text-[10px] uppercase tracking-widest text-grape-200/40">Publicidade</p>
       <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-ink-800/40">
-        <AdHtml key={current.id} html={html} className="animate-fade-in" />
+        {image ? (
+          href ? (
+            <a key={current.id} href={href} target="_blank" rel="noopener sponsored">
+              {image}
+            </a>
+          ) : (
+            image
+          )
+        ) : (
+          <AdHtml key={current.id} html={html} className="animate-fade-in" />
+        )}
       </div>
       {list.length > 1 && (
         <div className="mt-2 flex justify-center gap-1.5">

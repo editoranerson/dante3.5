@@ -10,6 +10,7 @@ import {
 import { navigateTo } from '@/lib/router';
 import { PageMeta, excerpt } from '@/lib/seo';
 import { AdSlot } from '@/components/AdSlot';
+import { StoryAdBlock } from '@/components/ads/StoryAdBlock';
 
 export function ChatstoryReaderPage({ slug, cap }: { slug: string; cap: string }) {
   const [story, setStory] = useState<Chatstory | null>(null);
@@ -154,6 +155,15 @@ export function ChatstoryReaderPage({ slug, cap }: { slug: string; cap: string }
         className="chatstory-reader min-h-[60vh] cursor-pointer select-none space-y-4 rounded-2xl border border-white/10 bg-ink-900/50 p-4 sm:p-6"
       >
         {elements.slice(0, visible).map((el) => {
+          if (el.kind === 'ad') {
+            return (
+              <StoryAdBlock
+                key={el.id}
+                tags={el.ad_tags ?? []}
+                sessionKey={`chatstory-${chapter.id}-${el.id}`}
+              />
+            );
+          }
           if (el.kind === 'narration') {
             return (
               <p
@@ -218,7 +228,11 @@ export function ChatstoryReaderPage({ slug, cap }: { slug: string; cap: string }
           const c = el.character_id ? charMap[el.character_id] : undefined;
           return (
             <p key={`t-${el.id}`}>
-              {el.kind === 'narration' ? el.content : `${c?.name ?? 'Alguém'}: ${el.content}`}
+              {el.kind === 'ad'
+                ? ''
+                : el.kind === 'narration'
+                ? el.content
+                : `${c?.name ?? 'Alguém'}: ${el.content}`}
             </p>
           );
         })}

@@ -8,6 +8,16 @@ import { supabase, SUPABASE_URL } from '@/lib/supabase';
 import type { ChatMessage } from '@/lib/supabase';
 import { fetchDanteBreaks, findActiveBreak, type DanteBreak } from '@/lib/danteBreaks';
 import { fetchDantePower, type DantePowerState } from '@/lib/dantePower';
+import { AdHtml } from '@/components/ads/AdHtml';
+import {
+  CHAT_AD_INTERVAL,
+  drawBanner,
+  fetchActiveBanners,
+  getLastShown,
+  resolveUserPlan,
+  setLastShown,
+  type AdBanner,
+} from '@/lib/ads';
 
 interface UIMessage {
   id: string;
@@ -47,6 +57,8 @@ export function DanteChat() {
   const [activeBreak, setActiveBreak] = useState<DanteBreak | null>(null);
   const [powerState, setPowerState] = useState<DantePowerState>({ enabled: true, message: '' });
   const [sarcasmScore, setSarcasmScore] = useState<number | null>(null);
+  const [chatAds, setChatAds] = useState<Record<string, AdBanner>>({});
+  const interactionsRef = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -130,6 +142,19 @@ export function DanteChat() {
   }, [input]);
 
   const powerOff = !isAdmin && !powerState.enabled;
+
+  const maybeShowChatAd = async (anchorId: string) => {
+    interactionsRef.current += 1;
+    const plan = resolveUserPlan(profile);
+    const interval = CHAT_AD_INTERVAL[plan] ?? 2;
+    if (interactionsRef.current % interval !== 0) return;
+    const rows = await fetchActiveBanners();
+    const pool = rows.filter((b) => b.placement === 'html');
+    const banner = drawBanner(pool, plan, 'chat', getLastShown('dante-chat'));
+    if (!banner) return;
+    setLastShown('dante-chat', banner.id);
+    setChatAds((prev) => ({ ...prev, [anchorId]: banner }));
+  };
 
   const sendMessage = async () => {
     if (!input.trim() || loading || !user || activeBreak || powerOff) return;
@@ -219,6 +244,7 @@ export function DanteChat() {
         content: data.reply,
       };
       setMessages((prev) => [...prev, aiMsg]);
+      void maybeShowChatAd(aiMsg.id);
 
       if (typeof data.sarcasm_score === 'number' && !Number.isNaN(data.sarcasm_score)) {
         setSarcasmScore(Math.max(0, Math.min(100, Math.round(data.sarcasm_score))));
@@ -395,8 +421,8 @@ export function DanteChat() {
               )}
 
               {messages.map((msg) => (
+                <div key={`w-${msg.id}`}>
                 <div
-                  key={msg.id}
                   className={`flex gap-2.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {msg.role === 'assistant' && (
@@ -426,6 +452,15 @@ export function DanteChat() {
                       msg.content
                     )}
                   </div>
+                </div>
+                {chatAds[msg.id] && (
+                  <div className="my-3 w-full">
+                    <p className="mb-1 text-center text-[10px] uppercase tracking-widest text-grape-200/40">
+                      Publicidade
+                    </p>
+                    <AdHtml html={chatAds[msg.id].codigo_html_mobile} />
+                  </div>
+                )}
                 </div>
               ))}
 

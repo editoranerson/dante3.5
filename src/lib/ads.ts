@@ -154,6 +154,25 @@ export function drawBanner(
   return pickWeighted(filterAllowed(banners, plan, ctx), lastId);
 }
 
+/** Filtra banners pelas tags (nome_interno) associadas a um ponto da história. */
+export function filterByTags(banners: AdBanner[], tags: string[] | null | undefined): AdBanner[] {
+  if (!tags || tags.length === 0) return banners;
+  const set = new Set(tags.map((t) => t.trim()).filter(Boolean));
+  if (set.size === 0) return banners;
+  return banners.filter((b) => set.has(b.nome_interno));
+}
+
+/* Último banner exibido por sessão/contexto (memória, sem persistência) */
+const lastShown: Record<string, string | null> = {};
+
+export function getLastShown(key: string): string | null {
+  return lastShown[key] ?? null;
+}
+
+export function setLastShown(key: string, id: string | null) {
+  lastShown[key] = id;
+}
+
 /* =====================================================================
  * Intervalo de interações do Chat do Dante
  * ===================================================================== */

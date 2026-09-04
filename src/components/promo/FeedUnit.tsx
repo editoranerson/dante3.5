@@ -36,16 +36,14 @@ export function FeedUnit({ sessionKey }: { sessionKey: string }) {
   if (!banner) return null;
 
   return (
-    <div className="flex w-full flex-col">
-      <p className="mb-1 text-center text-[10px] uppercase tracking-widest text-grape-200/40">
+    <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-white/10 bg-ink-800/40">
+      <span className="absolute left-2 top-2 z-10 rounded-md bg-ink-950/60 px-2 py-0.5 text-[10px] uppercase tracking-widest text-grape-100/70 backdrop-blur-sm">
         Publicidade
-      </p>
-      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-white/10 bg-ink-800/40">
-        <HtmlUnit
-          html={banner.codigo_html_mobile || banner.codigo_html_desktop}
-          className="flex h-full w-full items-center justify-center [&_img]:h-full [&_img]:w-full [&_img]:object-cover"
-        />
-      </div>
+      </span>
+      <HtmlUnit
+        html={banner.codigo_html_mobile || banner.codigo_html_desktop}
+        className="flex h-full w-full items-center justify-center [&_img]:h-full [&_img]:w-full [&_img]:object-cover"
+      />
     </div>
   );
 }

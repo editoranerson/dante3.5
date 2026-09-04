@@ -54,7 +54,7 @@ const CACHE_MS = 60_000;
 export async function fetchActiveBanners(force = false): Promise<AdBanner[]> {
   if (!force && cache && Date.now() - cache.at < CACHE_MS) return cache.rows;
   const { data, error } = await supabase
-    .from('ad_banners')
+    .from(PROMO_TABLE)
     .select('*')
     .eq('ativo', true)
     .order('peso_sorteio', { ascending: false });

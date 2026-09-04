@@ -118,7 +118,7 @@ function BannersManager({ placement }: { placement: AdPlacement }) {
   const load = () => {
     setLoading(true);
     supabase
-      .from('ad_banners')
+      .from(PROMO_TABLE)
       .select('*')
       .eq('placement', placement)
       .order('created_at', { ascending: false })
@@ -188,8 +188,8 @@ function BannersManager({ placement }: { placement: AdPlacement }) {
 
     setSaving(true);
     const { error } = editingId
-      ? await supabase.from('ad_banners').update(payload).eq('id', editingId)
-      : await supabase.from('ad_banners').insert(payload);
+      ? await supabase.from(PROMO_TABLE).update(payload).eq('id', editingId)
+      : await supabase.from(PROMO_TABLE).insert(payload);
     setSaving(false);
     if (error) return toast(error.message, 'error');
     invalidateBannerCache();
@@ -199,7 +199,7 @@ function BannersManager({ placement }: { placement: AdPlacement }) {
   };
 
   const toggle = async (b: AdBanner) => {
-    const { error } = await supabase.from('ad_banners').update({ ativo: !b.ativo }).eq('id', b.id);
+    const { error } = await supabase.from(PROMO_TABLE).update({ ativo: !b.ativo }).eq('id', b.id);
     if (error) return toast(error.message, 'error');
     invalidateBannerCache();
     load();
@@ -207,7 +207,7 @@ function BannersManager({ placement }: { placement: AdPlacement }) {
 
   const del = async (b: AdBanner) => {
     if (!window.confirm(`Excluir o banner "${b.nome_interno}"?`)) return;
-    const { error } = await supabase.from('ad_banners').delete().eq('id', b.id);
+    const { error } = await supabase.from(PROMO_TABLE).delete().eq('id', b.id);
     if (error) return toast(error.message, 'error');
     invalidateBannerCache();
     load();

@@ -8,6 +8,7 @@ import {
   EyeOff,
   Home as HomeIcon,
   MessageSquareCode,
+  LayoutGrid,
   ArrowLeft,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
@@ -18,13 +19,15 @@ import {
   AD_PLANO_LABELS,
   HOME_BANNER_SIZES,
   HTML_BANNER_SIZES,
+  INFEED_BANNER_SIZE,
+  PROMO_TABLE,
   buildImageBannerHtml,
   invalidateBannerCache,
   type AdBanner,
   type AdPlacement,
   type AdPlano,
   type AdTipo,
-} from '@/lib/ads';
+} from '@/lib/promos';
 
 type Tab = AdPlacement;
 
@@ -83,6 +86,7 @@ export function AnunciosPage() {
           [
             { id: 'home' as const, label: 'Banners da Home', icon: HomeIcon },
             { id: 'html' as const, label: 'Chat Dante e Chatstory', icon: MessageSquareCode },
+            { id: 'infeed' as const, label: 'In-feed (Personagens e Cartas)', icon: LayoutGrid },
           ]
         ).map((t) => (
           <button
@@ -114,11 +118,12 @@ function BannersManager({ placement }: { placement: AdPlacement }) {
   const [saving, setSaving] = useState(false);
 
   const isHome = placement === 'home';
+  const isFeed = placement === 'infeed';
 
   const load = () => {
     setLoading(true);
     supabase
-      .from('ad_banners')
+      .from(PROMO_TABLE)
       .select('*')
       .eq('placement', placement)
       .order('created_at', { ascending: false })
@@ -164,6 +169,9 @@ function BannersManager({ placement }: { placement: AdPlacement }) {
         return toast('Envie as imagens mobile e desktop.', 'error');
       mobile = buildImageBannerHtml(form.image_mobile_url, form.link_url.trim());
       desktop = buildImageBannerHtml(form.image_desktop_url, form.link_url.trim());
+    } else if (isFeed) {
+      if (!mobile) return toast('Informe o código HTML do bloco in-feed.', 'error');
+      desktop = mobile;
     } else {
       if (!mobile || !desktop)
         return toast('Os códigos HTML mobile e desktop são obrigatórios.', 'error');
@@ -188,8 +196,8 @@ function BannersManager({ placement }: { placement: AdPlacement }) {
 
     setSaving(true);
     const { error } = editingId
-      ? await supabase.from('ad_banners').update(payload).eq('id', editingId)
-      : await supabase.from('ad_banners').insert(payload);
+      ? await supabase.from(PROMO_TABLE).update(payload).eq('id', editingId)
+      : await supabase.from(PROMO_TABLE).insert(payload);
     setSaving(false);
     if (error) return toast(error.message, 'error');
     invalidateBannerCache();
@@ -199,7 +207,7 @@ function BannersManager({ placement }: { placement: AdPlacement }) {
   };
 
   const toggle = async (b: AdBanner) => {
-    const { error } = await supabase.from('ad_banners').update({ ativo: !b.ativo }).eq('id', b.id);
+    const { error } = await supabase.from(PROMO_TABLE).update({ ativo: !b.ativo }).eq('id', b.id);
     if (error) return toast(error.message, 'error');
     invalidateBannerCache();
     load();
@@ -207,7 +215,7 @@ function BannersManager({ placement }: { placement: AdPlacement }) {
 
   const del = async (b: AdBanner) => {
     if (!window.confirm(`Excluir o banner "${b.nome_interno}"?`)) return;
-    const { error } = await supabase.from('ad_banners').delete().eq('id', b.id);
+    const { error } = await supabase.from(PROMO_TABLE).delete().eq('id', b.id);
     if (error) return toast(error.message, 'error');
     invalidateBannerCache();
     load();
@@ -216,7 +224,13 @@ function BannersManager({ placement }: { placement: AdPlacement }) {
   return (
     <div>
       <div className="mb-4 rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-grape-200/70">
-        {isHome ? (
+        {isFeed ? (
+          <>
+            Tamanho único e responsivo —{' '}
+            <b className="text-grape-50">{INFEED_BANNER_SIZE.label}</b>. O bloco ocupa exatamente
+            uma célula do feed de Personagens e Cartas.
+          </>
+        ) : isHome ? (
           <>
             Tamanhos recomendados — <b className="text-grape-50">Mobile: {HOME_BANNER_SIZES.mobile.label}</b> ·{' '}
             <b className="text-grape-50">Desktop: {HOME_BANNER_SIZES.desktop.label}</b>
@@ -326,17 +340,27 @@ function BannersManager({ placement }: { placement: AdPlacement }) {
               <div className="grid gap-4 sm:grid-cols-2">
                 <ImageUpload
                   label={`Imagem mobile — ${HOME_BANNER_SIZES.mobile.label}`}
-                  folder="ads"
+                  folder="promo"
                   currentUrl={form.image_mobile_url}
                   onUploaded={(url) => setForm((f) => ({ ...f, image_mobile_url: url }))}
                 />
                 <ImageUpload
                   label={`Imagem desktop — ${HOME_BANNER_SIZES.desktop.label}`}
-                  folder="ads"
+                  folder="promo"
                   currentUrl={form.image_desktop_url}
                   onUploaded={(url) => setForm((f) => ({ ...f, image_desktop_url: url }))}
                 />
               </div>
+            </div>
+          ) : isFeed ? (
+            <div>
+              <label className="label">Código HTML do bloco in-feed *</label>
+              <textarea
+                className="input min-h-[110px] resize-y font-mono text-xs"
+                value={form.codigo_html_mobile}
+                onChange={(e) => setForm({ ...form, codigo_html_mobile: e.target.value })}
+                placeholder={`Imagem recomendada: ${INFEED_BANNER_SIZE.label}`}
+              />
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">

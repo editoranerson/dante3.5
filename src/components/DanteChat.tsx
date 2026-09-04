@@ -8,7 +8,7 @@ import { supabase, SUPABASE_URL } from '@/lib/supabase';
 import type { ChatMessage } from '@/lib/supabase';
 import { fetchDanteBreaks, findActiveBreak, type DanteBreak } from '@/lib/danteBreaks';
 import { fetchDantePower, type DantePowerState } from '@/lib/dantePower';
-import { AdHtml } from '@/components/ads/AdHtml';
+import { HtmlUnit } from '@/components/promo/HtmlUnit';
 import {
   CHAT_AD_INTERVAL,
   drawBanner,
@@ -17,7 +17,7 @@ import {
   resolveUserPlan,
   setLastShown,
   type AdBanner,
-} from '@/lib/ads';
+} from '@/lib/promos';
 
 interface UIMessage {
   id: string;
@@ -458,7 +458,7 @@ export function DanteChat() {
                     <p className="mb-1 text-center text-[10px] uppercase tracking-widest text-grape-200/40">
                       Publicidade
                     </p>
-                    <AdHtml html={chatAds[msg.id].codigo_html_mobile} />
+                    <HtmlUnit html={chatAds[msg.id].codigo_html_mobile} />
                   </div>
                 )}
                 </div>

@@ -9,7 +9,7 @@ interface Props {
  * Renderiza um bloco de HTML de anúncio (imagem, iframe ou script de rede).
  * Recria as tags <script> para que elas realmente executem.
  */
-export function AdHtml({ html, className = '' }: Props) {
+export function HtmlUnit({ html, className = '' }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export function AdHtml({ html, className = '' }: Props) {
   return (
     <div
       ref={ref}
-      className={`ad-html mx-auto w-full max-w-full overflow-hidden text-center [&_img]:mx-auto [&_img]:h-auto [&_img]:max-w-full [&_iframe]:max-w-full ${className}`}
+      className={`da-slot mx-auto w-full max-w-full overflow-hidden text-center [&_img]:mx-auto [&_img]:h-auto [&_img]:max-w-full [&_iframe]:max-w-full ${className}`}
     />
   );
 }

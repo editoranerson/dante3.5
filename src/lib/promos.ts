@@ -7,8 +7,11 @@ import { getEffectivePlan } from '@/lib/plans';
  * ===================================================================== */
 export type AdTipo = 'ad' | 'pub';
 export type AdPlano = 'bronze' | 'prata' | 'ouro';
-export type AdPlacement = 'home' | 'html';
-export type AdContext = 'home' | 'chat' | 'chatstory';
+export type AdPlacement = 'home' | 'html' | 'infeed';
+export type AdContext = 'home' | 'chat' | 'chatstory' | 'feed';
+
+/** Fonte de dados (view neutra sobre a tabela de banners). */
+export const PROMO_TABLE = 'spotlights';
 
 export interface AdBanner {
   id: string;
@@ -39,6 +42,13 @@ export const HOME_BANNER_SIZES = {
   desktop: { width: 1200, height: 300, label: '1200 x 300 px (proporção 4:1)' },
 } as const;
 
+/** Tamanho único e responsivo do bloco in-feed (mesmo formato dos cards 3:4). */
+export const INFEED_BANNER_SIZE = {
+  width: 600,
+  height: 800,
+  label: '600 x 800 px (proporção 3:4, responsivo)',
+} as const;
+
 /** Tamanhos padrão dos blocos HTML (Chat Dante / Chatstory). */
 export const HTML_BANNER_SIZES = {
   mobile: '320 x 50 px (ou 300 x 50 px)',
@@ -54,7 +64,7 @@ const CACHE_MS = 60_000;
 export async function fetchActiveBanners(force = false): Promise<AdBanner[]> {
   if (!force && cache && Date.now() - cache.at < CACHE_MS) return cache.rows;
   const { data, error } = await supabase
-    .from('ad_banners')
+    .from(PROMO_TABLE)
     .select('*')
     .eq('ativo', true)
     .order('peso_sorteio', { ascending: false });
@@ -113,6 +123,57 @@ const HIDE_AD_TYPE: Record<PlanType, AdContext[]> = {
   dante_premium: ['chatstory'],
   dante_premium_plus: ['chatstory', 'chat'],
 };
+
+/** Quantos cards do feed entre um bloco in-feed e outro (a 1ª linha é imune). */
+export const FEED_AD_INTERVAL: Record<PlanType, number> = {
+  free: 4,
+  dante_plus: 6,
+  dante_premium: 8,
+  dante_premium_plus: 10,
+};
+
+/**
+ * Intercala blocos de anúncio numa lista de cards.
+ * A primeira linha (cols itens) nunca recebe anúncio; a contagem começa depois dela.
+ */
+export function interleaveFeedAds<T>(
+  items: T[],
+  cols: number,
+  interval: number,
+): Array<{ kind: 'item'; item: T; key: string } | { kind: 'ad'; key: string; slot: number }> {
+  const out: Array<{ kind: 'item'; item: T; key: string } | { kind: 'ad'; key: string; slot: number }> = [];
+  let counted = 0;
+  let slot = 0;
+  items.forEach((item, i) => {
+    out.push({ kind: 'item', item, key: `i-${i}` });
+    if (i + 1 <= cols) return; // primeira linha imune
+    counted += 1;
+    if (counted % interval === 0 && i + 1 < items.length) {
+      out.push({ kind: 'ad', key: `a-${slot}`, slot });
+      slot += 1;
+    }
+  });
+  return out;
+}
+
+/** Nº de colunas do grid a partir dos breakpoints informados (mobile-first). */
+export function useGridColumns(bp: { base: number; sm?: number; lg?: number; md?: number }) {
+  const [cols, setCols] = useState(bp.base);
+  useEffect(() => {
+    const calc = () => {
+      const w = window.innerWidth;
+      let c = bp.base;
+      if (bp.sm && w >= 640) c = bp.sm;
+      if (bp.md && w >= 768) c = bp.md;
+      if (bp.lg && w >= 1024) c = bp.lg;
+      setCols(c);
+    };
+    calc();
+    window.addEventListener('resize', calc);
+    return () => window.removeEventListener('resize', calc);
+  }, [bp.base, bp.sm, bp.md, bp.lg]);
+  return cols;
+}
 
 export function isBannerAllowed(banner: AdBanner, plan: PlanType, ctx: AdContext): boolean {
   if (!banner.ativo) return false;

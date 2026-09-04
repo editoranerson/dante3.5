@@ -2,11 +2,17 @@ import { useEffect, useState } from 'react';
 import { BookOpen, Sparkles } from 'lucide-react';
 import { supabase, type Character } from '@/lib/supabase';
 import { Modal } from '@/components/Modal';
+import { FeedUnit } from '@/components/promo/FeedUnit';
+import { useAuth } from '@/lib/auth';
+import { FEED_AD_INTERVAL, interleaveFeedAds, resolveUserPlan, useGridColumns } from '@/lib/promos';
 
 export function PersonagensPage() {
   const [items, setItems] = useState<Character[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Character | null>(null);
+  const { profile } = useAuth();
+  const cols = useGridColumns({ base: 2, sm: 3, lg: 4 });
+  const feed = interleaveFeedAds(items, cols, FEED_AD_INTERVAL[resolveUserPlan(profile)]);
 
   useEffect(() => {
     supabase
@@ -44,17 +50,20 @@ export function PersonagensPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 lg:gap-8">
-          {items.map((c) => (
+          {feed.map((entry) =>
+            entry.kind === 'ad' ? (
+              <FeedUnit key={entry.key} sessionKey={`feed-personagens#${entry.slot}`} />
+            ) : (
             <button
-              key={c.id}
-              onClick={() => setSelected(c)}
+              key={entry.item.id}
+              onClick={() => setSelected(entry.item)}
               className="group flex flex-col items-center"
             >
               <div className="book-3d relative aspect-[3/4] w-full overflow-hidden rounded-r-lg rounded-l-sm border-l-[6px] border-grape-700/60">
-                {c.photo_url ? (
+                {entry.item.photo_url ? (
                   <img
-                    src={c.photo_url}
-                    alt={c.name}
+                    src={entry.item.photo_url}
+                    alt={entry.item.name}
                     className="h-full w-full object-cover"
                   />
                 ) : (
@@ -65,15 +74,16 @@ export function PersonagensPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-ink-950/80 via-transparent to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-2 text-center sm:p-3">
                   <p className="font-display text-xs font-semibold text-white drop-shadow-lg sm:text-sm">
-                    {c.name}
+                    {entry.item.name}
                   </p>
                 </div>
               </div>
               <span className="mt-2 truncate text-xs font-medium text-grape-200/70 group-hover:text-grape-50 sm:mt-3 sm:text-sm">
-                {c.name}
+                {entry.item.name}
               </span>
             </button>
-          ))}
+            ),
+          )}
         </div>
       )}
 

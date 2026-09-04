@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth';
-import { AdHtml } from '@/components/ads/AdHtml';
+import { HtmlUnit } from '@/components/promo/HtmlUnit';
 import {
   drawBanner,
   fetchActiveBanners,
@@ -10,13 +10,13 @@ import {
   setLastShown,
   useIsMobileDevice,
   type AdBanner,
-} from '@/lib/ads';
+} from '@/lib/promos';
 
 /**
  * Bloco <AdBlock /> da Chatstory: sorteia um banner entre as tags associadas
  * ao ponto da história, respeitando plano do usuário e sem repetir o último.
  */
-export function StoryAdBlock({ tags, sessionKey }: { tags: string[]; sessionKey: string }) {
+export function StoryUnit({ tags, sessionKey }: { tags: string[]; sessionKey: string }) {
   const { profile } = useAuth();
   const isMobile = useIsMobileDevice();
   const plan = resolveUserPlan(profile);
@@ -45,7 +45,7 @@ export function StoryAdBlock({ tags, sessionKey }: { tags: string[]; sessionKey:
       <p className="mb-1 text-center text-[10px] uppercase tracking-widest text-grape-200/40">
         Publicidade
       </p>
-      <AdHtml html={html} />
+      <HtmlUnit html={html} />
     </div>
   );
 }

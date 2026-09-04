@@ -24,7 +24,7 @@ import {
   type AdPlacement,
   type AdPlano,
   type AdTipo,
-} from '@/lib/ads';
+} from '@/lib/promos';
 
 type Tab = AdPlacement;
 

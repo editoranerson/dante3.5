@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/lib/auth';
-import { AdHtml } from '@/components/ads/AdHtml';
+import { HtmlUnit } from '@/components/promo/HtmlUnit';
 import {
   filterAllowed,
   resolveUserPlan,
@@ -8,7 +8,7 @@ import {
   normalizeUrl,
   useIsMobileDevice,
   type AdBanner,
-} from '@/lib/ads';
+} from '@/lib/promos';
 
 const ROTATE_MS = 7000;
 
@@ -19,7 +19,7 @@ function orderByWeight(list: AdBanner[]): AdBanner[] {
   );
 }
 
-export function HomeAdCarousel() {
+export function HomeCarousel() {
   const { profile } = useAuth();
   const { banners } = useActiveBanners('home');
   const isMobile = useIsMobileDevice();
@@ -70,7 +70,7 @@ export function HomeAdCarousel() {
             image
           )
         ) : (
-          <AdHtml key={current.id} html={html} className="animate-fade-in" />
+          <HtmlUnit key={current.id} html={html} className="animate-fade-in" />
         )}
       </div>
       {list.length > 1 && (

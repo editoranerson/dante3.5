@@ -340,13 +340,13 @@ function BannersManager({ placement }: { placement: AdPlacement }) {
               <div className="grid gap-4 sm:grid-cols-2">
                 <ImageUpload
                   label={`Imagem mobile — ${HOME_BANNER_SIZES.mobile.label}`}
-                  folder="ads"
+                  folder="promo"
                   currentUrl={form.image_mobile_url}
                   onUploaded={(url) => setForm((f) => ({ ...f, image_mobile_url: url }))}
                 />
                 <ImageUpload
                   label={`Imagem desktop — ${HOME_BANNER_SIZES.desktop.label}`}
-                  folder="ads"
+                  folder="promo"
                   currentUrl={form.image_desktop_url}
                   onUploaded={(url) => setForm((f) => ({ ...f, image_desktop_url: url }))}
                 />

@@ -326,13 +326,7 @@ function BannersManager({ placement }: { placement: AdPlacement }) {
             </div>
           )}
 
-          {isFeed ? (
-          <>
-            Tamanho único e responsivo —{' '}
-            <b className="text-grape-50">{INFEED_BANNER_SIZE.label}</b>. O bloco ocupa exatamente
-            uma célula do feed de Personagens e Cartas.
-          </>
-        ) : isHome ? (
+          {isHome ? (
             <div className="space-y-4">
               <div>
                 <label className="label">Link de destino (clique)</label>

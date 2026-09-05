@@ -99,7 +99,12 @@ export function AmbassadorPanel() {
       toast(error.message, 'error');
       return;
     }
-    setAccount(data as AffiliateAccount);
+    const created = (Array.isArray(data) ? data[0] : data) as AffiliateAccount | null;
+    if (!created || !created.referral_code) {
+      toast('Nao foi possivel ativar sua conta de embaixador.', 'error');
+      return;
+    }
+    setAccount(created);
     toast('Voce agora e um Embaixador Dante!', 'success');
     await loadAmbassadorData();
   };

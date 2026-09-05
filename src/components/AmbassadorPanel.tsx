@@ -77,8 +77,10 @@ export function AmbassadorPanel() {
   const load = useCallback(async () => {
     if (!user) return;
     const { data: acctData } = await supabase.rpc('check_affiliate_account');
-    setAccount(acctData as AffiliateAccount | null);
-    if (acctData) {
+    const raw = (Array.isArray(acctData) ? acctData[0] : acctData) as AffiliateAccount | null;
+    const acct = raw && raw.user_id && raw.referral_code ? raw : null;
+    setAccount(acct);
+    if (acct) {
       await loadAmbassadorData();
     }
     setLoading(false);

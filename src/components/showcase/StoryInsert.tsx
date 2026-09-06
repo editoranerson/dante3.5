@@ -10,7 +10,7 @@ import {
   setLastShown,
   useIsMobileDevice,
   type AdBanner,
-} from '@/lib/promos';
+} from '@/lib/showcase';
 
 /**
  * Bloco <AdBlock /> da Chatstory: sorteia um banner entre as tags associadas

@@ -9,7 +9,7 @@ import {
   localMediaUrl,
   useIsMobileDevice,
   type AdBanner,
-} from '@/lib/promos';
+} from '@/lib/showcase';
 
 const ROTATE_MS = 7000;
 

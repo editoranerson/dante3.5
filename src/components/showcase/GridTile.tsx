@@ -8,7 +8,7 @@ import {
   resolveUserPlan,
   setLastShown,
   type AdBanner,
-} from '@/lib/promos';
+} from '@/lib/showcase';
 
 /**
  * Bloco in-feed: ocupa exatamente uma célula do grid (mesmo formato dos cards 3:4).

@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/lib/auth';
-import { HtmlUnit } from '@/components/promo/HtmlUnit';
+import { EmbedFrame } from '@/components/showcase/EmbedFrame';
 import {
   filterAllowed,
   resolveUserPlan,
   useActiveBanners,
   normalizeUrl,
+  localMediaUrl,
   useIsMobileDevice,
   type AdBanner,
-} from '@/lib/promos';
+} from '@/lib/showcase';
 
 const ROTATE_MS = 7000;
 
@@ -19,7 +20,7 @@ function orderByWeight(list: AdBanner[]): AdBanner[] {
   );
 }
 
-export function HomeCarousel() {
+export function HomeShowcase() {
   const { profile } = useAuth();
   const { banners } = useActiveBanners('home');
   const isMobile = useIsMobileDevice();
@@ -51,7 +52,7 @@ export function HomeCarousel() {
 
   const image = imageUrl ? (
     <img
-      src={imageUrl}
+      src={localMediaUrl(imageUrl)}
       alt={current.nome_interno || 'Publicidade'}
       className="block h-auto w-full animate-fade-in"
     />
@@ -63,14 +64,14 @@ export function HomeCarousel() {
       <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-ink-800/40">
         {image ? (
           href ? (
-            <a key={current.id} href={href} target="_blank" rel="noopener sponsored">
+            <a key={current.id} href={href} target="_blank" rel="noopener noreferrer">
               {image}
             </a>
           ) : (
             image
           )
         ) : (
-          <HtmlUnit key={current.id} html={html} className="animate-fade-in" />
+          <EmbedFrame key={current.id} html={html} className="animate-fade-in" />
         )}
       </div>
       {list.length > 1 && (

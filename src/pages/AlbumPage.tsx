@@ -11,8 +11,8 @@ import { useAuth } from '@/lib/auth';
 import { useToast } from '@/components/Toast';
 import { Modal } from '@/components/Modal';
 import { GuestBanner } from '@/components/GuestBanner';
-import { FeedUnit } from '@/components/promo/FeedUnit';
-import { FEED_AD_INTERVAL, interleaveFeedAds, resolveUserPlan, useGridColumns } from '@/lib/promos';
+import { GridTile } from '@/components/showcase/GridTile';
+import { FEED_AD_INTERVAL, interleaveFeedAds, resolveUserPlan, useGridColumns } from '@/lib/showcase';
 import { addPendingCard, getPendingCards, getPendingDantes } from '@/lib/pendingRewards';
 
 export function AlbumPage() {
@@ -145,7 +145,7 @@ export function AlbumPage() {
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {feed.map((entry) => {
             if (entry.kind === 'ad')
-              return <FeedUnit key={entry.key} sessionKey={`feed-cartas#${entry.slot}`} />;
+              return <GridTile key={entry.key} sessionKey={`grade-cartas#${entry.slot}`} />;
             const card = entry.item;
             const isOwned = owned.has(card.id);
             return (

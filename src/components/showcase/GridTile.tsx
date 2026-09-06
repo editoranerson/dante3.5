@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth';
-import { HtmlUnit } from '@/components/promo/HtmlUnit';
+import { EmbedFrame } from '@/components/showcase/EmbedFrame';
 import {
   drawBanner,
   fetchActiveBanners,
@@ -8,13 +8,13 @@ import {
   resolveUserPlan,
   setLastShown,
   type AdBanner,
-} from '@/lib/promos';
+} from '@/lib/showcase';
 
 /**
  * Bloco in-feed: ocupa exatamente uma célula do grid (mesmo formato dos cards 3:4).
  * Sorteio ponderado + regras de plano, sem repetir o último exibido na sessão.
  */
-export function FeedUnit({ sessionKey }: { sessionKey: string }) {
+export function GridTile({ sessionKey }: { sessionKey: string }) {
   const { profile } = useAuth();
   const plan = resolveUserPlan(profile);
   const [banner, setBanner] = useState<AdBanner | null>(null);
@@ -40,7 +40,7 @@ export function FeedUnit({ sessionKey }: { sessionKey: string }) {
       <span className="absolute left-2 top-2 z-10 rounded-md bg-ink-950/60 px-2 py-0.5 text-[10px] uppercase tracking-widest text-grape-100/70 backdrop-blur-sm">
         Publicidade
       </span>
-      <HtmlUnit
+      <EmbedFrame
         html={banner.codigo_html_mobile || banner.codigo_html_desktop}
         className="flex h-full w-full items-center justify-center [&_img]:h-full [&_img]:w-full [&_img]:object-cover"
       />

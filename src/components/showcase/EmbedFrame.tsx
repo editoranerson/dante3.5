@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { localMediaUrl } from '@/lib/showcase';
 
 interface Props {
   html: string;
@@ -9,13 +10,20 @@ interface Props {
  * Renderiza um bloco de HTML de anúncio (imagem, iframe ou script de rede).
  * Recria as tags <script> para que elas realmente executem.
  */
-export function HtmlUnit({ html, className = '' }: Props) {
+export function EmbedFrame({ html, className = '' }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    el.innerHTML = html || '';
+    const template = document.createElement('template');
+    template.innerHTML = html || '';
+    template.content.querySelectorAll('img').forEach((image) => {
+      const source = image.getAttribute('src');
+      if (source) image.setAttribute('src', localMediaUrl(source));
+      image.removeAttribute('srcset');
+    });
+    el.replaceChildren(template.content.cloneNode(true));
     const scripts = Array.from(el.querySelectorAll('script'));
     scripts.forEach((old) => {
       const s = document.createElement('script');
@@ -31,7 +39,7 @@ export function HtmlUnit({ html, className = '' }: Props) {
   return (
     <div
       ref={ref}
-      className={`da-slot mx-auto w-full max-w-full overflow-hidden text-center [&_img]:mx-auto [&_img]:h-auto [&_img]:max-w-full [&_iframe]:max-w-full ${className}`}
+      className={`qd-media mx-auto w-full max-w-full overflow-hidden text-center [&_img]:mx-auto [&_img]:h-auto [&_img]:max-w-full [&_iframe]:max-w-full ${className}`}
     />
   );
 }

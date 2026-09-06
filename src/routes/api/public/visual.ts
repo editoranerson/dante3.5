@@ -8,7 +8,9 @@ const allowedPath = '/storage/v1/object/public/';
 function decodeSource(value: string) {
   const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
   const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
-  return decodeURIComponent(escape(atob(padded)));
+  const binary = atob(padded);
+  const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
 }
 
 export const Route = createFileRoute('/api/public/visual')({

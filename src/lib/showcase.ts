@@ -24,7 +24,8 @@ export function localMediaUrl(source: string | null | undefined): string {
     if (url.hostname !== OWN_MEDIA_HOST || !url.pathname.includes('/storage/v1/object/public/')) {
       return value;
     }
-    const encoded = btoa(unescape(encodeURIComponent(url.toString())))
+    const bytes = new TextEncoder().encode(url.toString());
+    const encoded = btoa(Array.from(bytes, (byte) => String.fromCharCode(byte)).join(''))
       .replace(/\+/g, '-')
       .replace(/\//g, '_')
       .replace(/=+$/g, '');

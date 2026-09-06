@@ -8,7 +8,7 @@ import { supabase, SUPABASE_URL } from '@/lib/supabase';
 import type { ChatMessage } from '@/lib/supabase';
 import { fetchDanteBreaks, findActiveBreak, type DanteBreak } from '@/lib/danteBreaks';
 import { fetchDantePower, type DantePowerState } from '@/lib/dantePower';
-import { HtmlUnit } from '@/components/promo/HtmlUnit';
+import { EmbedFrame } from '@/components/showcase/EmbedFrame';
 import {
   CHAT_AD_INTERVAL,
   drawBanner,
@@ -17,7 +17,7 @@ import {
   resolveUserPlan,
   setLastShown,
   type AdBanner,
-} from '@/lib/promos';
+} from '@/lib/showcase';
 
 interface UIMessage {
   id: string;
@@ -57,7 +57,7 @@ export function DanteChat() {
   const [activeBreak, setActiveBreak] = useState<DanteBreak | null>(null);
   const [powerState, setPowerState] = useState<DantePowerState>({ enabled: true, message: '' });
   const [sarcasmScore, setSarcasmScore] = useState<number | null>(null);
-  const [chatAds, setChatAds] = useState<Record<string, AdBanner>>({});
+  const [chatInserts, setChatInserts] = useState<Record<string, AdBanner>>({});
   const interactionsRef = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -150,10 +150,10 @@ export function DanteChat() {
     if (interactionsRef.current % interval !== 0) return;
     const rows = await fetchActiveBanners();
     const pool = rows.filter((b) => b.placement === 'html');
-    const banner = drawBanner(pool, plan, 'chat', getLastShown('dante-chat'));
+    const banner = drawBanner(pool, plan, 'chat', getLastShown('dante-conversa'));
     if (!banner) return;
-    setLastShown('dante-chat', banner.id);
-    setChatAds((prev) => ({ ...prev, [anchorId]: banner }));
+    setLastShown('dante-conversa', banner.id);
+    setChatInserts((prev) => ({ ...prev, [anchorId]: banner }));
   };
 
   const sendMessage = async () => {
@@ -453,12 +453,12 @@ export function DanteChat() {
                     )}
                   </div>
                 </div>
-                {chatAds[msg.id] && (
+                {chatInserts[msg.id] && (
                   <div className="my-3 w-full">
                     <p className="mb-1 text-center text-[10px] uppercase tracking-widest text-grape-200/40">
                       Publicidade
                     </p>
-                    <HtmlUnit html={chatAds[msg.id].codigo_html_mobile} />
+                    <EmbedFrame html={chatInserts[msg.id].codigo_html_mobile} />
                   </div>
                 )}
                 </div>

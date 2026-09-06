@@ -10,7 +10,7 @@ import {
 import { navigateTo } from '@/lib/router';
 import { PageMeta, excerpt } from '@/lib/seo';
 import { AdSlot } from '@/components/AdSlot';
-import { StoryUnit } from '@/components/promo/StoryUnit';
+import { StoryInsert } from '@/components/showcase/StoryInsert';
 
 export function ChatstoryReaderPage({ slug, cap }: { slug: string; cap: string }) {
   const [story, setStory] = useState<Chatstory | null>(null);
@@ -157,10 +157,10 @@ export function ChatstoryReaderPage({ slug, cap }: { slug: string; cap: string }
         {elements.slice(0, visible).map((el) => {
           if (el.kind === 'ad') {
             return (
-              <StoryUnit
+              <StoryInsert
                 key={el.id}
                 tags={el.ad_tags ?? []}
-                sessionKey={`chatstory-${chapter.id}-${el.id}`}
+                sessionKey={`story-${chapter.id}-${el.id}`}
               />
             );
           }

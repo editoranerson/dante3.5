@@ -13,6 +13,27 @@ export type AdContext = 'home' | 'chat' | 'chatstory' | 'feed';
 /** Fonte de dados (view neutra sobre a tabela de banners). */
 export const PROMO_TABLE = 'spotlights';
 
+const OWN_MEDIA_HOST = 'kpplssyiehosifuejobr.supabase.co';
+
+/** Entrega mídias próprias por uma URL local neutra, evitando filtros por pasta/domínio. */
+export function localMediaUrl(source: string | null | undefined): string {
+  const value = (source ?? '').trim();
+  if (!value || typeof window === 'undefined') return value;
+  try {
+    const url = new URL(value, window.location.origin);
+    if (url.hostname !== OWN_MEDIA_HOST || !url.pathname.includes('/storage/v1/object/public/')) {
+      return value;
+    }
+    const encoded = btoa(unescape(encodeURIComponent(url.toString())))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/g, '');
+    return `/api/public/visual?source=${encoded}`;
+  } catch {
+    return value;
+  }
+}
+
 export interface AdBanner {
   id: string;
   nome_interno: string;
@@ -272,7 +293,7 @@ export function buildImageBannerHtml(imageUrl: string, linkUrl: string, alt = 'P
   const a = alt.replace(/"/g, '&quot;');
   const img = `<img src="${imageUrl}" alt="${a}" style="display:block;width:100%;height:auto;border-radius:12px" />`;
   const href = normalizeUrl(linkUrl);
-  return href ? `<a href="${href}" target="_blank" rel="noopener sponsored">${img}</a>` : img;
+  return href ? `<a href="${href}" target="_blank" rel="noopener noreferrer">${img}</a>` : img;
 }
 
 /** Garante protocolo em links cadastrados (ex.: "site.com" -> "https://site.com"). */

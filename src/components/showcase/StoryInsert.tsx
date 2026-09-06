@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth';
-import { HtmlUnit } from '@/components/promo/HtmlUnit';
+import { EmbedFrame } from '@/components/showcase/EmbedFrame';
 import {
   drawBanner,
   fetchActiveBanners,
@@ -16,7 +16,7 @@ import {
  * Bloco <AdBlock /> da Chatstory: sorteia um banner entre as tags associadas
  * ao ponto da história, respeitando plano do usuário e sem repetir o último.
  */
-export function StoryUnit({ tags, sessionKey }: { tags: string[]; sessionKey: string }) {
+export function StoryInsert({ tags, sessionKey }: { tags: string[]; sessionKey: string }) {
   const { profile } = useAuth();
   const isMobile = useIsMobileDevice();
   const plan = resolveUserPlan(profile);
@@ -45,7 +45,7 @@ export function StoryUnit({ tags, sessionKey }: { tags: string[]; sessionKey: st
       <p className="mb-1 text-center text-[10px] uppercase tracking-widest text-grape-200/40">
         Publicidade
       </p>
-      <HtmlUnit html={html} />
+      <EmbedFrame html={html} />
     </div>
   );
 }

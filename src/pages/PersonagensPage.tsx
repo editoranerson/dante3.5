@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { BookOpen, Sparkles } from 'lucide-react';
 import { supabase, type Character } from '@/lib/supabase';
 import { Modal } from '@/components/Modal';
-import { FeedUnit } from '@/components/promo/FeedUnit';
+import { GridTile } from '@/components/showcase/GridTile';
 import { useAuth } from '@/lib/auth';
-import { FEED_AD_INTERVAL, interleaveFeedAds, resolveUserPlan, useGridColumns } from '@/lib/promos';
+import { FEED_AD_INTERVAL, interleaveFeedAds, resolveUserPlan, useGridColumns } from '@/lib/showcase';
 
 export function PersonagensPage() {
   const [items, setItems] = useState<Character[]>([]);
@@ -52,7 +52,7 @@ export function PersonagensPage() {
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 lg:gap-8">
           {feed.map((entry) =>
             entry.kind === 'ad' ? (
-              <FeedUnit key={entry.key} sessionKey={`feed-personagens#${entry.slot}`} />
+              <GridTile key={entry.key} sessionKey={`grade-personagens#${entry.slot}`} />
             ) : (
             <button
               key={entry.item.id}

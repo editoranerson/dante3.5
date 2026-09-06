@@ -8,7 +8,7 @@ import {
   type ChatstoryElement,
 } from '@/lib/supabase';
 import { useToast } from '@/components/Toast';
-import { fetchActiveBanners } from '@/lib/promos';
+import { fetchActiveBanners } from '@/lib/showcase';
 import { Modal } from '@/components/Modal';
 import { ImageUpload } from '@/components/ImageUpload';
 

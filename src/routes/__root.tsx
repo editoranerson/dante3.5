@@ -102,15 +102,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     scripts: [
       {
+        children: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+var __c = null;
+try { __c = localStorage.getItem('uqd_cookie_consent'); } catch (e) {}
+var __g = __c === 'accepted' ? 'granted' : 'denied';
+gtag('consent', 'default', {
+  ad_storage: __g,
+  ad_user_data: __g,
+  ad_personalization: __g,
+  analytics_storage: __g,
+  wait_for_update: 500
+});
+if (__g === 'denied') { window.adsbygoogle = window.adsbygoogle || []; window.adsbygoogle.requestNonPersonalizedAds = 1; }`,
+      },
+      {
         src: "https://www.googletagmanager.com/gtag/js?id=G-MBQYQH3791",
         async: true,
       },
       {
-        children: `window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
+        children: `gtag('js', new Date());
 gtag('config', 'G-MBQYQH3791');`,
       },
+
       {
         src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8156784789940885",
         async: true,

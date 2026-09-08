@@ -28,6 +28,8 @@ import { FaqPage } from '@/pages/FaqPage';
 import { LojaPage } from '@/pages/LojaPage';
 import { MinijogosPage } from '@/pages/MinijogosPage';
 import { PlanosPage } from '@/pages/PlanosPage';
+import { NotFoundPage } from '@/pages/NotFoundPage';
+import { PaymentSuccessPage } from '@/pages/PaymentSuccessPage';
 import { ChatstoryListPage } from '@/pages/ChatstoryListPage';
 import { ChatstoryDetailPage } from '@/pages/ChatstoryDetailPage';
 import { ChatstoryReaderPage } from '@/pages/ChatstoryReaderPage';
@@ -124,8 +126,10 @@ function Routed() {
       return <ChatstoryDetailPage slug={route.slug} />;
     case 'chatstory_cap':
       return <ChatstoryReaderPage slug={route.slug} cap={route.cap} />;
+    case 'payment_success':
+      return <PaymentSuccessPage />;
     default:
-      return <HomePage />;
+      return <NotFoundPage />;
   }
 }
 

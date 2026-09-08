@@ -55,6 +55,7 @@
   --animate-infinity-pulse: infinity-pulse 1.5s ease-in-out infinite;
   --animate-border-rotate: border-rotate 3s ease infinite;
   --animate-slide-up: slide-up 0.3s ease-out both;
+  --animate-pay-flow: pay-flow 2.5s ease-in-out infinite;
 
   @keyframes floaty {
     0%, 100% { transform: translateY(0); }
@@ -84,6 +85,16 @@
   @keyframes slide-up {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pay-flow {
+    0% { left: 0%; transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+    8% { left: 0%; transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    30% { left: 0%; transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    45% { left: 50%; transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    55% { left: 50%; transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    70% { left: 100%; transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    92% { left: 100%; transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { left: 100%; transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
   }
 }
 

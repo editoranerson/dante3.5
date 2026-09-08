@@ -28,7 +28,8 @@ export type Route =
   | { name: 'diag' }
   | { name: 'afiliados' }
   | { name: 'afiliados_diretrizes' }
-  | { name: 'payment_success' };
+  | { name: 'payment_success' }
+  | { name: 'not_found' };
 
 function parsePath(path: string): Route {
   if (path === '/' || !path) return { name: 'home' };
@@ -67,7 +68,7 @@ function parsePath(path: string): Route {
   const catMatch = path.match(/^\/biblioteca\/([^/]+)$/);
   if (catMatch) return { name: 'biblioteca', cat: catMatch[1] };
 
-  return { name: 'home' };
+  return { name: 'not_found' };
 }
 
 function parseLocation(): Route {
@@ -138,6 +139,8 @@ export function routeToPath(route: Route): string {
       return '/afiliados/diretrizes';
     case 'payment_success':
       return '/pagamento-concluido';
+    case 'not_found':
+      return '/';
   }
 }
 

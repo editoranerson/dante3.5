@@ -128,6 +128,8 @@ function Routed() {
       return <ChatstoryReaderPage slug={route.slug} cap={route.cap} />;
     case 'payment_success':
       return <PaymentSuccessPage />;
+    case 'not_found':
+      return <NotFoundPage />;
     default:
       return <NotFoundPage />;
   }

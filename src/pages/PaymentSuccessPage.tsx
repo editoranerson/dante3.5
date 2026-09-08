@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { Building2, DollarSign, Infinity, User } from 'lucide-react';
 import { navigateTo } from '@/lib/router';
 
 export function PaymentSuccessPage() {
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.title = 'Pagamento Concluído — Querido Dante';
   }, []);
 

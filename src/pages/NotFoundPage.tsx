@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { MapPin, Smartphone, WifiOff } from 'lucide-react';
 import { navigateTo } from '@/lib/router';
 
 export function NotFoundPage() {
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.title = 'Página não encontrada — Querido Dante';
   }, []);
 

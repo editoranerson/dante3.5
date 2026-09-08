@@ -27,7 +27,8 @@ export type Route =
   | { name: 'chatstory_cap'; slug: string; cap: string }
   | { name: 'diag' }
   | { name: 'afiliados' }
-  | { name: 'afiliados_diretrizes' };
+  | { name: 'afiliados_diretrizes' }
+  | { name: 'payment_success' };
 
 function parsePath(path: string): Route {
   if (path === '/' || !path) return { name: 'home' };
@@ -54,6 +55,7 @@ function parsePath(path: string): Route {
   if (path === '/diag') return { name: 'diag' };
   if (path === '/afiliados') return { name: 'afiliados' };
   if (path === '/afiliados/diretrizes') return { name: 'afiliados_diretrizes' };
+  if (path === '/pagamento-concluido') return { name: 'payment_success' };
 
   const csCap = path.match(/^\/chatstorys\/([^/]+)\/(.+)$/);
   if (csCap) return { name: 'chatstory_cap', slug: csCap[1], cap: csCap[2] };
@@ -134,6 +136,8 @@ export function routeToPath(route: Route): string {
       return '/afiliados';
     case 'afiliados_diretrizes':
       return '/afiliados/diretrizes';
+    case 'payment_success':
+      return '/pagamento-concluido';
   }
 }
 

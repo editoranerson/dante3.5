@@ -85,13 +85,33 @@ Deno.serve(async (req: Request) => {
     const isAdmin = profile.role === "admin";
 
     if (!isAdmin) {
-      const todayStr = new Date().toISOString().slice(0, 10);
+      const todayStr = new Date(Date.now() - 3 * 60 * 60 * 1000)
+        .toISOString()
+        .slice(0, 10);
       if (profile.last_message_date !== todayStr) {
+        // Recarga diária dos créditos do plano (não acumulativa)
+        const active =
+          profile.plan_expires_at &&
+          new Date(profile.plan_expires_at as string).getTime() > Date.now();
+        const effectivePlan = active ? profile.plan : "free";
+        const dailyLimit =
+          effectivePlan === "dante_plus"
+            ? 20
+            : effectivePlan === "dante_premium"
+              ? 40
+              : effectivePlan === "dante_premium_plus"
+                ? 100
+                : 10;
         await admin
           .from("profiles")
-          .update({ messages_today: 0, last_message_date: todayStr })
+          .update({
+            messages_today: 0,
+            last_message_date: todayStr,
+            credits: dailyLimit,
+          })
           .eq("id", userId);
         profile.messages_today = 0;
+        profile.credits = dailyLimit;
       }
 
       if ((profile.credits ?? 0) <= 0) {

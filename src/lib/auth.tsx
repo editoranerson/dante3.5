@@ -32,6 +32,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loadProfile = async (uid: string) => {
     try {
+      // Garante a recarga diária de créditos (não acumulativa) antes de ler o perfil.
+      try {
+        await supabase.rpc('ensure_daily_credits');
+      } catch {
+        /* função ainda não criada no banco */
+      }
       const { data, error } = await supabase
         .from('profiles')
         .select('*')

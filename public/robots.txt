@@ -1,6 +1,18 @@
 User-agent: Googlebot
 Allow: /
 
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: AdsBot-Google-Mobile
+Allow: /
+
+User-agent: Google-AdSense
+Allow: /
+
 User-agent: Bingbot
 Allow: /
 
@@ -13,4 +25,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://queridodante.lovable.app/sitemap.xml
+Sitemap: https://queridodante.site/sitemap.xml

@@ -1,27 +1,23 @@
 import { useEffect, useState } from 'react';
-import { Cookie, X } from 'lucide-react';
+import { Cookie } from 'lucide-react';
 import { navigateTo } from '@/lib/router';
-
-const STORAGE_KEY = 'uqd_cookie_consent';
+import { applyConsent, getConsent, setConsent } from '@/lib/consent';
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem(STORAGE_KEY);
-    if (!consent) {
-      const timer = setTimeout(() => setVisible(true), 800);
-      return () => clearTimeout(timer);
+    const consent = getConsent();
+    if (consent) {
+      applyConsent(consent);
+      return;
     }
+    const timer = setTimeout(() => setVisible(true), 800);
+    return () => clearTimeout(timer);
   }, []);
 
-  const accept = () => {
-    localStorage.setItem(STORAGE_KEY, 'accepted');
-    setVisible(false);
-  };
-
-  const dismiss = () => {
-    localStorage.setItem(STORAGE_KEY, 'dismissed');
+  const choose = (value: 'accepted' | 'rejected') => {
+    setConsent(value);
     setVisible(false);
   };
 
@@ -33,7 +29,8 @@ export function CookieBanner() {
         <div className="flex items-start gap-3 sm:flex-1">
           <Cookie size={22} className="mt-0.5 flex-shrink-0 text-rose-400" />
           <p className="text-sm text-grape-100/80">
-            Usamos cookies para melhorar sua experiência. Ao continuar, você concorda com nossa{' '}
+            Usamos cookies para melhorar sua experiência. Você pode recusar e continuar navegando
+            normalmente. Saiba mais na nossa{' '}
             <button
               onClick={() => navigateTo({ name: 'privacy' })}
               className="font-medium text-rose-300 underline hover:text-rose-200"
@@ -44,15 +41,11 @@ export function CookieBanner() {
           </p>
         </div>
         <div className="flex items-center gap-2 sm:flex-shrink-0">
-          <button onClick={accept} className="btn-primary py-2 text-sm">
+          <button onClick={() => choose('accepted')} className="btn-primary py-2 text-sm">
             Aceitar
           </button>
-          <button
-            onClick={dismiss}
-            className="rounded-lg p-2 text-grape-200/60 hover:bg-white/10 hover:text-grape-50"
-            aria-label="Fechar"
-          >
-            <X size={18} />
+          <button onClick={() => choose('rejected')} className="btn-ghost py-2 text-sm">
+            Recusar
           </button>
         </div>
       </div>
